@@ -1,22 +1,385 @@
-<center>
-    <h2>Login</h2>
-    <table>
-        <form action="/login" method="post">
-            <tr>
-                <td><label for="usuario">Email</label></td>
-                <td><input type="text" name="email" id="email" required="required"></td>
-            </tr>
-            <tr>
-                <td><label for="senha">Senha</label></td>
-                <td><input type="text" name="senha" id="senha" required="required"></td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                <input type="submit" value="Login" class="btn btn-success">
-                </td>
-            </tr>
-        </form>
-    </table>
-</center>
+<style>
+    .col {
+        flex: 0 0 0%;
+    }
+    #container_principal {
+        font-size: 10pt; 
+        width: 95%;
+        margin: 0 auto;
+    }
+    .text-center {
+        padding-top: 1%;
+    }
+    td {
+        padding: 2%;
+    }
+    .toast.fade.show{
+        font-size: 7pt;
+    }
+</style>
+ 
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load("current", {packages:['bar']});
+    google.charts.setOnLoadCallback(drawChart);
 
+    function drawChart() {
+      var dataArray = [
+        ["Categoria", "Valor Total", { "role": "style" }],
+        {{#each listaCategoria}}
+          ["{{categoria}}", {{valorTotal}}, "color: blue"],
+        {{/each}}
+      ];
+
+      // Ordena os dados do maior para o menor
+      dataArray.sort(function(a, b) {
+        return b[1] - a[1];
+      });
+
+      var data = google.visualization.arrayToDataTable(dataArray);
+
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "Gastos por categoria",
+        bar: {groupWidth: "50%"},
+        legend: { position: "none" },
+        
+      };
+
+     var chart = new google.charts.Bar(document.getElementById('columnchart_values'));
+        // Convert the Classic options to Material options.
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+
+
+    }
+  </script>
+
+
+
+<div class="fab-container">
+  <div class="fab shadow">
+    <div class="fab-content">
+      <a href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><font size="6" color="white"><span class="bi bi-plus-circle"></span></font></a>
+    </div>
+  </div>
+  <!--<div class="sub-button shadow">
+    <a href="google.com" target="_blank">
+      <span class="material-icons">phone</span>
+    </a>
+  </div>-->
+</div>
+
+<script>
+    function proximo(){
+        var mesAtual = {{mesAtual}}
+        var proximoMes = mesAtual+1
+        if(proximoMes<10){
+            proximoMes = proximoMes.toString().padStart(2, '0')
+        }
+        window.location.assign("/home?id="+proximoMes);
+    }
+
+    function anterior(){
+        var mesAtual = {{mesAtual}}
+        var proximoMes = mesAtual-1
+        if(proximoMes<10){
+            proximoMes = proximoMes.toString().padStart(2, '0')
+        }
+        window.location.assign("/home?id="+proximoMes);
+    }
+</script>
+
+<div id="container_principal" class="text-center">
+    <table width="100%">
+        <tr> 
+            <td colspan="2">
+                <table>
+                    <tr>
+                        <td>
+                            <div class="toast fade show">
+                                <div class="toast-header">
+                                    <strong class="me-auto">{{dolar.code}}/{{dolar.codein}} - {{dolar.name}}</strong>
+                                    <small>{{dolar.create_date}}</small>
+                                </div>
+                                <div class="toast-body">
+                                    Valor de compra: {{dolar.bid}} <br>
+                                    Valor de venda: {{dolar.ask}} <br>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                             <div class="toast fade show">
+                                <div class="toast-header">
+                                    <strong class="me-auto">{{euro.code}}/{{euro.codein}} - {{euro.name}}</strong>
+                                    <small>{{dolar.create_date}}</small>
+                                </div>
+                                <div class="toast-body">
+                                    Valor de compra: {{euro.bid}} <br>
+                                    Valor de venda: {{euro.ask}} <br>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <td><button onclick="anterior()" class="btn btn-outline-secondary"><i class="bi bi-arrow-bar-left"></i></button></td>
+                        <td>
+                            <select id="month" onchange="redirectToPage()" class="form-select" style="width: 107%">
+                                <option value="{{mesAtual}}">Exibindo mes: {{mesAtual}}</option>
+                                <option value="/home?id=01">01</option>
+                                <option value="/home?id=02">02</option>
+                                <option value="/home?id=03">03</option>
+                                <option value="/home?id=04">04</option>
+                                <option value="/home?id=05">05</option>
+                                <option value="/home?id=06">06</option>
+                                <option value="/home?id=07">07</option>
+                                <option value="/home?id=08">08</option>
+                                <option value="/home?id=09">09</option>
+                                <option value="/home?id=10">10</option>
+                                <option value="/home?id=11">11</option>
+                                <option value="/home?id=12">12</option>
+                            </select>
+                        </td>
+                        <td><button onclick="proximo()" class="btn btn-outline-secondary"><i class="bi bi-arrow-bar-right"></i></button></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+   
+        <tr>
+            <td colspan="2">
+                <div id="columnchart_values"></div>
+            </td>
+            <td valign="top" rowspan="2">
+                {{#each listaTipos}}
+                    <div class="toast fade show">
+                        <div class="toast-header">
+                            <font color="red">
+                                <i class="bi bi-arrow-down-circle-fill"> 
+                                    <strong class="me-auto">{{tipo}}</strong>
+                                </i>
+                            </font>
+                        </div>
+                        <div class="toast-body">
+                            Valor Total: R$ {{valorTotal}}
+                        </div>
+                    </div> </br>
+                {{/each}}
+                {{#each listaSaidas}}
+                    <div class="toast fade show">
+                        <div class="toast-header">
+                            <font color="red">
+                                <i class="bi bi-arrow-down-circle-fill"> 
+                                    <strong class="me-auto"> Total: Saída</strong>
+                                </i>
+                            </font>
+                        </div>
+                        <div class="toast-body">
+                            Valor Total: R$ {{valorTotal}}
+                        </div>
+                    </div> </br>
+                {{/each}}
+                {{#each listaEntradas}}
+                    <div class="toast fade show">
+                        <div class="toast-header">
+                            <font color="green">
+                                <i class="bi bi-arrow-up-circle-fill"> 
+                                    <strong class="me-auto"> Total: Entrada</strong>
+                                </i>
+                            </font>
+                        </div>
+                        <div class="toast-body">
+                            Valor Total: R$ {{valorTotal}}
+                        </div>
+                    </div></br>
+                {{/each}}
+                <div class="toast show">
+                    <div class="toast-header">
+                        <font color="green">
+                            <i class="bi bi-arrow-up-circle-fill"> 
+                                <strong class="me-auto"> Saldo: (Entrada - Saída)</strong>
+                            </i>
+                        </font>
+                        <strong class="me-auto"></strong>
+                    </div>
+                    <div class="toast-body">
+                        Valor Total: R$ {{saldoFinal}}
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table class="table">
+                    <tr>
+                        <th class="bg-primary text-white">Data</th>
+                        <th class="bg-primary text-white">Tipo</th>
+                        <th class="bg-primary text-white">Estabelecimento</th>
+                        <th class="bg-primary text-white">Valor</th>
+                        <th class="bg-primary text-white">Parcelas</th>
+                        <th class="bg-primary text-white">Categoria</th>
+                        <th class="bg-primary text-white">Excluir</th>
+                    </tr>
+                    {{#each listaRegistro}}
+                    <tr>
+                        <td>{{data_vencimento}}</td>
+                        <td>{{tipo}}</td>
+                        <td>{{estabelecimento}}</td>
+                        <td>{{valor}}</td>
+                        <td>{{parcelas}}/{{n_parcelas}}</td>
+                        <td>{{categoria}}</td>
+                        <td><a href="#" onclick="Deletar{{id_registro}}(event)"><i class="bi bi-trash3-fill"></i></a></td>
+                    </tr>
+                    <script>
+                        function Deletar{{id_registro}}(event) {
+                        event.preventDefault();
+
+                        if (confirm("Tem certeza que deseja deletar?")) {
+                            window.location.href = "/deletar?id="+{{id_registro}}; 
+                        }
+                        }
+                    </script>
+                   
+                    {{/each}}
+                </table>
+            </td>
+            <td valign="top">
+                <table class="table">
+                    <tr>
+                        <th class="bg-primary text-white">Categoria</th>
+                        <th class="bg-primary text-white">Valor</th>
+                    </tr>
+                    {{#each listaCategoria}}
+                    <tr>
+                        <td>{{categoria}}</td>
+                        <td>{{valorTotal}}</td>
+                    </tr>
+                    {{/each}}
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+  
+<!-- Modal -->
+<form action="/registrar" method="post">
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Registro</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                         <div class="row">
+                            <div class="col-md-3">Data de compra/entrada</div>
+                            <div class="col-md-9">
+                                <input type="date" name="data_compra" id="data_compra" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">Data de vencimento</div>
+                            <div class="col-md-9">
+                                <input type="date" name="data_vencimento" id="data_vencimento" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">Tipo</div>
+                            <div class="col-md-9">
+                                <select name="tipo" id="tipo" class="form-select">
+                                    <option value="Saída - Crédito">Saída - Crédito</option>
+                                    <option value="Saída - Débido">Saída - Débido</option>
+                                    <option value="Entrada">Entrada</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">Estabelecimento</div>
+                            <div class="col-md-9">
+                                <input type="text" name="estabelecimento" id="estabelecimento" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">Valor da parcela</div>
+                            <div class="col-md-9">
+                                <input type="text" name="valor" id="valor" class="form-control">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">Parcelado?</div>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="parcelas" name="parcelas">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">Número de Parcelas</div>
+                            <div class="col-md-9">
+                            <input type="text" id="n_parcelas" name="n_parcelas" class="form-control" disabled="disabled">  
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-3">Categoria</div>
+                            <div class="col-md-9">
+                                <select name="categoria" id="categoria" class="form-select">
+                                    {{#each listaCategorias}}
+                                         <option value="{{categoria}}">{{categoria}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sair</button>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+    <script>
+        document.getElementById('parcelas').addEventListener('change', function() {
+            var nParcelasInput = document.getElementById('n_parcelas');
+            if (this.checked) {
+                nParcelasInput.disabled = false;
+                nParcelasInput.required = true;
+            } else {
+                nParcelasInput.disabled = true;
+                nParcelasInput.required = false;
+            }
+        });
+
+        $(document).ready(function() {
+            $('#valor').maskMoney({prefix:'R$ ', allowNegative: false, thousands:'', decimal:',', affixesStay: false});
+        });
+
+
+        function redirectToPage() {
+            const selectElement = document.getElementById("month");
+            const selectedValue = selectElement.value;
+            
+            if (selectedValue) {
+                window.location.assign(selectedValue);
+            }
+        }
+    
+    </script>
 {{{home}}}

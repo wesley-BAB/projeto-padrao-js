@@ -1,0 +1,59 @@
+<style>
+    #container_principal {
+        font-size: 10pt; 
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    
+</style>
+
+<div id="container_principal">
+    <br><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    + Nova categoria
+    </button>
+    <a href="/home" class="btn btn-danger">Voltar</a>
+    
+    <br><br>
+
+    <form action="/cadastrarCategoria" method="post">
+        <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nova Categoria</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" name="categoria" id="categoria" class="form-control" required="required">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <table class="table">
+        <tr>
+            <th class="bg-primary text-white">Id</th>
+            <th class="bg-primary text-white">Categoria</th>
+        </tr>
+        {{#each listaCategorias}}
+        <tr>
+            <td>{{id_categoria}}</td>
+            <td>{{categoria}}</td>
+        </tr>
+        {{/each}}
+    </table>
+</div>
+
+
+
+<script>
+    var exampleModal = document.getElementById('exampleModal');
+    exampleModal.addEventListener('shown.bs.modal', function () {
+      document.getElementById('categoria').focus();
+    });
+  </script>
